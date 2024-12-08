@@ -11,7 +11,12 @@ export default function ViewAllFaculty() {
   useEffect(() => {
     const fetchFaculty = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_FACULTY);
+        const response = await axios.get(APIS.VIEW_ALL_FACULTY,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          });
        
         setFaculty(response.data);
       } catch (error) {

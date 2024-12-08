@@ -13,7 +13,12 @@ export default function ViewAllApplyLeaves() {
     const faculty = JSON.parse(localStorage.getItem("faculty"));
     const fetchLeaveApplications = async () => {
       try {
-        const response = await axios.get(`${APIS.VIEW_ALL_APPLY_LEAVES}?facultyId=${faculty.id}`); // Replace with actual API endpoint
+        const response = await axios.get(`${APIS.VIEW_ALL_APPLY_LEAVES}?facultyId=${faculty.id}`,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }); // Replace with actual API endpoint
         setLeaveApplications(response.data);
       } catch (error) {
         console.error("Error fetching leave applications:", error);

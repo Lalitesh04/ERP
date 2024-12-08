@@ -139,9 +139,9 @@ export default function SideBar() {
             </ListItem>
             <AccordionBody className="py-1">
               <List className="p-0 space-y-1">
-                <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />Approve Payment</ListItem>
-                <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />View All Payments</ListItem>
-                <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />View Payments By Faculty</ListItem>
+               <Link to="/viewallfeepayments"> <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />View All Payment</ListItem></Link>
+                {/* <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />View All Payments</ListItem>
+                <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />View Payments By Faculty</ListItem> */}
               </List>
             </AccordionBody>
           </Accordion>

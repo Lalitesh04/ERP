@@ -6,18 +6,37 @@ import APIS from "../admin/APIS";
 export default function PayFee() {
   const [student, setStudent] = useState(null);
   const [feeAmount, setFeeAmount] = useState("");
-  const [feeType, setFeeType] = useState(""); // Default value set to ''
+  const [feeType, setFeeType] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch student details from localStorage
-    const storedStudent = JSON.parse(localStorage.getItem("student"));
-    console.log(storedStudent.id)
-    setStudent(storedStudent);
+    const fetchStudent = async () => {
+      try {
+        const storedStudent = JSON.parse(localStorage.getItem("student"));
+        if (storedStudent) {
+          setStudent(storedStudent);
+        } else {
+          setError("Student details not found.");
+        }
+      } catch (err) {
+        setError("Error fetching student details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudent();
   }, []);
 
   const handlePayment = () => {
-    if (!feeAmount || !feeType) {
-      alert("Please enter a Fee Amount and select a Fee Type.");
+    if (!feeAmount || parseFloat(feeAmount) <= 0) {
+      alert("Please enter a valid Fee Amount greater than 0.");
+      return;
+    }
+
+    if (!feeType) {
+      alert("Please select a Fee Type.");
       return;
     }
 
@@ -29,9 +48,8 @@ export default function PayFee() {
       description: `Fee Payment - ${feeType}`,
       image: "https://example.com/logo.png", // Optional company logo
       handler: async function (response) {
-        // On successful payment, prepare the payment details
         const paymentDetails = {
-        studentId: student.id,
+          studentId: student.id,
           feeType: feeType,
           amount: parseFloat(feeAmount),
           transactionId: response.razorpay_payment_id,
@@ -68,6 +86,14 @@ export default function PayFee() {
     razorpay.open();
   };
 
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="flex justify-center items-center h-screen text-red-500">{error}</div>;
+  }
+
   return (
     <div className="flex">
       <SideBar />
@@ -79,13 +105,6 @@ export default function PayFee() {
 
           {student ? (
             <div>
-              {/* Disabled fields with hidden values */}
-              <input type="hidden" value={student.id} id="studentId" />
-              <input type="hidden" value={student.name} id="studentName" />
-              <input type="hidden" value={student.email} id="studentEmail" />
-              <input type="hidden" value={student.contactno} id="studentContact" />
-
-              {/* Fee Type Selection */}
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">
                   Fee Type:
@@ -101,7 +120,6 @@ export default function PayFee() {
                 </select>
               </div>
 
-              {/* Fee Amount */}
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-2">
                   Fee Amount (₹):
@@ -114,7 +132,6 @@ export default function PayFee() {
                 />
               </div>
 
-              {/* Pay Button */}
               <button
                 onClick={handlePayment}
                 className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"

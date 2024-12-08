@@ -10,7 +10,12 @@ export default function ViewAllSections() {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_SECTIONS);
+        const response = await axios.get(APIS.VIEW_ALL_SECTIONS,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          });
         setSections(response.data);
       } catch (error) {
         console.error("Error fetching sections:", error);

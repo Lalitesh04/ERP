@@ -11,7 +11,12 @@ export default function ViewAllStudents() {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_STUDENTS);
+        const response = await axios.get(APIS.VIEW_ALL_STUDENTS,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          });
         setStudents(response.data);
       } catch (error) {
         console.error("Error fetching students:", error);

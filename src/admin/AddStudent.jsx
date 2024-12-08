@@ -34,6 +34,7 @@ export default function AddStudent() {
       const response = await axios.post(APIS.ADD_STUDENT, data, {
         headers: {
           "Content-Type": "multipart/form-data",
+          "api-key":"1234567890"
         },
       });
       console.log("Student added:", response.data);

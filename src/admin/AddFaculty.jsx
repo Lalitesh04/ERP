@@ -35,6 +35,7 @@ export default function AddFaculty() {
       const response = await axios.post(APIS.ADD_FACULTY, data, {
         headers: {
           "Content-Type": "multipart/form-data",
+          "api-key": "1234567890",
         },
       });
       console.log("Faculty added:", response.data);

@@ -12,7 +12,12 @@ export default function ApproveLeave() {
   const fetchLeaveApplications = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(APIS.VIEW_ALL_LEAVES); // Replace with your actual endpoint
+      const response = await axios.get(APIS.VIEW_ALL_LEAVES,
+        {
+            headers: {
+                'api-key': '1234567890',
+            },
+        }); // Replace with your actual endpoint
       setLeaveApplications(response.data);
       setError("");
     } catch (error) {
@@ -31,7 +36,8 @@ export default function ApproveLeave() {
   const handleUpdate = async (leaveId, status) => {
     try {
       await axios.post(`${APIS.UPDATE_LEAVE_STATUS}`, null, {
-        params: { facultyLeaveId: leaveId, status: status },
+        params: { facultyLeaveId: leaveId, status: status }
+        
       });
 
       // Refresh the list after updating the status

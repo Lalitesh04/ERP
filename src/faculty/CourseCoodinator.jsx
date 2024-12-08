@@ -50,7 +50,7 @@ export default function CourseCoordinator() {
 
     try {
       const response = await axios.post(APIS.UPLOAD_HANDOUT, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data" , 'api-key': '1234567890'},
       });
       alert(response.data || "Handout uploaded successfully!");
       setIsModalOpen(false);

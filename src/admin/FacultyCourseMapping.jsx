@@ -14,7 +14,12 @@ export default function FacultyCourseMapping() {
   useEffect(() => {
     const fetchFaculties = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_FACULTY); // Replace with actual endpoint
+        const response = await axios.get(APIS.VIEW_ALL_FACULTY,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }); // Replace with actual endpoint
         setFaculties(response.data);
       } catch (error) {
         console.error("Error fetching faculties:", error);
@@ -24,7 +29,12 @@ export default function FacultyCourseMapping() {
 
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_COURSES); // Replace with actual endpoint
+        const response = await axios.get(APIS.VIEW_ALL_COURSES,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }); // Replace with actual endpoint
         setCourses(response.data);
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -53,7 +63,12 @@ export default function FacultyCourseMapping() {
     };
 
     try {
-      await axios.post(APIS.ADD_COURSE_FACULTY_MAPPING, mappingRequest); // Replace with actual endpoint
+      await axios.post(APIS.ADD_COURSE_FACULTY_MAPPING, mappingRequest,
+        {
+            headers: {
+                'api-key': '1234567890',
+            },
+        }); // Replace with actual endpoint
       alert("Mapping added successfully!");
       setSelectedFaculty("");
       setSelectedCourse("");

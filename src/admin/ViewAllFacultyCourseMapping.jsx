@@ -11,7 +11,12 @@ export default function ViewAllFacultyCourseMapping() {
   useEffect(() => {
     const fetchMappings = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_COURSE_FACULTY_MAPPING); // Replace with actual endpoint
+        const response = await axios.get(APIS.VIEW_ALL_COURSE_FACULTY_MAPPING,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }); // Replace with actual endpoint
         setMappings(response.data);
       } catch (error) {
         console.error("Error fetching mappings:", error);

@@ -13,7 +13,12 @@ export default function ViewAllCourses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_COURSES); // Adjust the API endpoint accordingly
+        const response = await axios.get(APIS.VIEW_ALL_COURSES,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }); // Adjust the API endpoint accordingly
         setCourses(response.data);
       } catch (error) {
         console.error("Error fetching courses:", error);

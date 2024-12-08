@@ -1,9 +1,18 @@
-import { Link } from "react-router-dom"
-import { ArrowRight, FileText, Users, BarChart3 } from 'lucide-react'
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, FileText, Users, BarChart3 } from 'lucide-react';
+import SwaggerEmbed from "./SwaggerEmbed"; // Import SwaggerEmbed component
 
 export default function MainHome() {
+  const [showSwagger, setShowSwagger] = useState(false);
+
+  const toggleSwagger = () => {
+    setShowSwagger((prev) => !prev);
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Header Section */}
       <header className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-16 text-center text-white">
         <h1 className="mb-6 text-5xl font-extrabold">Welcome to ERP System</h1>
         <p className="mb-8 text-lg font-light">
@@ -28,9 +37,17 @@ export default function MainHome() {
           >
             Contact
           </Link>
+          {/* Swagger UI Button */}
+          <button
+            onClick={toggleSwagger}
+            className="rounded-lg bg-yellow-600 px-8 py-3 font-semibold text-white shadow-md transition duration-300 hover:bg-yellow-500"
+          >
+            Open Swagger UI
+          </button>
         </nav>
       </header>
 
+      {/* Main Content Section */}
       <main className="container mx-auto px-6 py-12">
         <h2 className="mb-8 text-center text-3xl font-bold text-gray-800">
           Why Choose Our ERP System?
@@ -54,6 +71,7 @@ export default function MainHome() {
         </div>
       </main>
 
+      {/* Footer Section */}
       <footer className="bg-gray-800 px-6 py-12 text-center text-white">
         <h3 className="mb-4 text-2xl font-bold">
           Take the Next Step in Streamlining Your Institution!
@@ -82,8 +100,11 @@ export default function MainHome() {
           </Link>
         </nav>
       </footer>
+
+      {/* Render Swagger UI if toggled */}
+      {showSwagger && <SwaggerEmbed toggleSwagger={toggleSwagger} />}
     </div>
-  )
+  );
 }
 
 function Feature({ icon: Icon, title, description }) {
@@ -95,6 +116,5 @@ function Feature({ icon: Icon, title, description }) {
       </div>
       <p className="text-gray-600">{description}</p>
     </div>
-  )
+  );
 }
-

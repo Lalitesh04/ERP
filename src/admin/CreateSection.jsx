@@ -17,8 +17,18 @@ export default function CreateSection() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const coursesResponse = await axios.get(APIS.VIEW_ALL_COURSES)
-        const facultiesResponse = await axios.get(APIS.VIEW_ALL_FACULTY)
+        const coursesResponse = await axios.get(APIS.VIEW_ALL_COURSES,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          })
+        const facultiesResponse = await axios.get(APIS.VIEW_ALL_FACULTY,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          })
         setCourses(coursesResponse.data);
         setFaculties(facultiesResponse.data);
       } catch (error) {
@@ -39,7 +49,12 @@ export default function CreateSection() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(APIS.CREATE_SECTION, formData);
+      const response = await axios.post(APIS.CREATE_SECTION, formData,
+        {
+            headers: {
+                'api-key': '1234567890',
+            },
+        });
       console.log("Section created:", response.data);
       alert("Section created successfully!");
       setFormData({

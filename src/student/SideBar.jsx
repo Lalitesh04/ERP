@@ -82,7 +82,7 @@ export default function SideBar() {
             </ListItem>
             <AccordionBody className="py-1">
               <List className="p-0 space-y-1">
-               <Link to="/payfee"> <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />App Fee</ListItem></Link>
+               <Link to="/payfee"> <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />Pay Fee</ListItem></Link>
                <Link to="/viewallpayments"> <ListItem className="text-gray-600 hover:text-blue-500"><ChevronRightIcon className="h-3 w-5 mr-2" />View All Payments</ListItem></Link>
               </List>
             </AccordionBody>

@@ -20,7 +20,11 @@ export default function AddCourse() {
   useEffect(() => {
     const fetchFaculties = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_FACULTY); // Assuming this endpoint returns all faculty details
+        const response = await axios.get(APIS.VIEW_ALL_FACULTY,{
+          headers: {
+              'api-key': '1234567890',
+          },
+      }); // Assuming this endpoint returns all faculty details
         setFaculties(response.data);
       } catch (error) {
         console.error('Error fetching faculties:', error);

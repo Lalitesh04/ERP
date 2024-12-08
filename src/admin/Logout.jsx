@@ -13,7 +13,7 @@ export default function Logout() {
         localStorage.removeItem("faculty");
         const timer = setTimeout(() => {
             navigate("/");
-        }, 3000);
+        }, 2000);
 
         return () => clearTimeout(timer);
     }, [navigate]);

@@ -35,7 +35,12 @@ export default function ApplyLeave() {
     };
 
     try {
-      const response = await axios.post(APIS.APPLY_LEAVE, requestData); // Replace with actual API endpoint
+      const response = await axios.post(APIS.APPLY_LEAVE, requestData,
+        {
+            headers: {
+                'api-key': '1234567890',
+            },
+        }); // Replace with actual API endpoint
       if (response.status === 200) {
         setMessage("Leave application submitted successfully!");
       } else {

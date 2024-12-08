@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:2001/api"; 
+const baseURL = "http://kl-erp-env.eba-taqxsvmb.us-east-1.elasticbeanstalk.com:2001/api"; 
 const APIS = {
     LOGIN: `${baseURL}/checkLogin`,
     ADD_STUDENT : `${baseURL}/admin/addstudent`,
@@ -44,6 +44,10 @@ const APIS = {
     VIEW_ALL_PAYMENTS : `${baseURL}/student/viewAllPayments`,
 
     VIEW_PROFILE_FACULTY : `${baseURL}/faculty/viewProfile`,
+
+    VIEW_ALL_FEE_PAYMENTS : `${baseURL}/admin/viewAllFeePayments`,
+
+    SWAGGER_UI : `http://10.128.0.79:2001/swagger-ui/index.html`
 };
 
 export default APIS;

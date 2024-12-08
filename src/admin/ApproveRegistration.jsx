@@ -14,7 +14,12 @@ export default function ApproveRegistration() {
   const fetchStudents = async () => {
     setIsLoading(true); // Set loading to true before fetching data
     try {
-      const response = await axios.get(APIS.VIEW_ALL_STUDENTS);
+      const response = await axios.get(APIS.VIEW_ALL_STUDENTS,
+        {
+            headers: {
+                'api-key': '1234567890',
+            },
+        });
       setStudents(response.data); // Store fetched data in state
       setError(null); // Reset error
     } catch (error) {
@@ -34,7 +39,12 @@ export default function ApproveRegistration() {
   const handleAction = async (studentId, value) => {
     try {
       const response = await axios.post(
-        `${APIS.APPROVE_STUDENT_REGISTRATION}?studentId=${studentId}&value=${value}`
+        `${APIS.APPROVE_STUDENT_REGISTRATION}?studentId=${studentId}&value=${value}`,
+        {
+            headers: {
+                'api-key': '1234567890',
+            },
+        }
       );
       fetchStudents(); // Refresh the student list after action
     } catch (error) {

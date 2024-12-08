@@ -17,7 +17,12 @@ export default function ViewFacultyCourses() {
 
         
         const response = await axios.get(
-          `${APIS.VIEW_FACULTY_COURSES}?facultyId=${faculty.id}`
+          `${APIS.VIEW_FACULTY_COURSES}?facultyId=${faculty.id}`,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }
         ); 
         console.log(response.data);
         setFacultyCourses(response.data);

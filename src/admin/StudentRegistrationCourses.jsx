@@ -10,7 +10,12 @@ export default function StudentRegistrationCourses() {
   useEffect(() => {
     const fetchStudentCourses = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_REGISTERED_COURSES); // Replace with the actual API endpoint
+        const response = await axios.get(APIS.VIEW_ALL_REGISTERED_COURSES,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }); // Replace with the actual API endpoint
         console.log(response.data);
         
         setStudentCourses(response.data);

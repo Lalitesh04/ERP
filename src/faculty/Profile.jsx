@@ -19,7 +19,12 @@ export default function Profile() {
 
         // Fetch profile details from the API
         const response = await axios.get(
-          `${APIS.VIEW_PROFILE_FACULTY}?facultyId=${storedFaculty.id}`
+          `${APIS.VIEW_PROFILE_FACULTY}?facultyId=${storedFaculty.id}`,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }
         );
 
         if (response.status === 200) {

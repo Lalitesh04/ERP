@@ -3,6 +3,7 @@ import axios from "axios";
 import SideBar from "./SideBar";
 import APIS from "../admin/APIS";
 import { EyeIcon } from "@heroicons/react/24/solid";
+import Loader from "../Loader";
 
 export default function StudentRegisteredCourses() {
   const [registeredCourses, setRegisteredCourses] = useState([]);
@@ -19,7 +20,7 @@ export default function StudentRegisteredCourses() {
           return;
         }
         const response = await axios.get(
-          `${APIS.VIEW_ALL_REGISTERED_COURSES_BY_STUDENT}?studentId=${student.studentId}`
+         ` ${APIS.VIEW_ALL_REGISTERED_COURSES_BY_STUDENT}?studentId=${student.studentId}`
         );
 
         setRegisteredCourses(response.data);
@@ -55,7 +56,9 @@ export default function StudentRegisteredCourses() {
         </h1>
 
         {isLoading ? (
-          <p className="text-center text-gray-600">Loading...</p>
+          <div className="flex justify-center items-center">
+            <Loader />
+          </div>
         ) : registeredCourses.length === 0 ? (
           <p className="text-center text-red-600">No Registered Courses Found</p>
         ) : (

@@ -16,7 +16,12 @@ export default function UploadContent() {
     const fetchSections = async () => {
         const faculty  =  JSON.parse(localStorage.getItem("faculty"));
       try {
-        const response = await axios.get(`${APIS.VIEW_ALL_SECTIONS_BY_FACULTY}?facultyId=${faculty.id}`); // Replace with actual endpoint
+        const response = await axios.get(`${APIS.VIEW_ALL_SECTIONS_BY_FACULTY}?facultyId=${faculty.id}`,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }); // Replace with actual endpoint
         setSections(response.data);
       } catch (error) {
         console.error("Error fetching sections:", error);
@@ -44,7 +49,7 @@ export default function UploadContent() {
       setIsSubmitting(true);
       setMessage("");
       const response = await axios.post(`${APIS.UPLOAD_CONTENT}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data", 'api-key':"1234567890" },
       });
       setMessage("Content uploaded successfully!");
       setTitle("");

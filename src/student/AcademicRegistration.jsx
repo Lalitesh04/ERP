@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SideBar from "./SideBar";
 import APIS from "../admin/APIS";
+import Loader from "../Loader";
 
 export default function AcademicRegistration() {
   const [coursesWithSections, setCoursesWithSections] = useState([]);
   const [selectedSections, setSelectedSections] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [message, setMessage] = useState(""); // For displaying messages
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false); // For loader during submission
 
-  // Fetch courses with sections
   useEffect(() => {
     const fetchSections = async () => {
       try {
@@ -26,7 +27,7 @@ export default function AcademicRegistration() {
         );
         const student = studentResponse.data;
 
-        if(student.registered){
+        if (student.registered) {
           setMessage("Registration Already completed");
           return;
         }
@@ -35,10 +36,9 @@ export default function AcademicRegistration() {
           return;
         }
 
-        const response = await axios.get(APIS.VIEW_ALL_SECTIONS);
+        const response = await axios.get(`${APIS.VIEW_ALL_SECTIONS}`);
         const sections = response.data;
 
-        // Group sections by course
         const groupedByCourse = sections.reduce((acc, section) => {
           const courseId = section.course.id;
           if (!acc[courseId]) {
@@ -70,7 +70,6 @@ export default function AcademicRegistration() {
     fetchSections();
   }, []);
 
-  // Handle section selection
   const handleSectionChange = (courseId, sectionId) => {
     setSelectedSections((prev) => ({
       ...prev,
@@ -78,20 +77,18 @@ export default function AcademicRegistration() {
     }));
   };
 
-  // Show confirmation modal
   const handleConfirm = () => {
     if (
-      Object.keys(selectedSections).length === 0 ||
+      Object.keys(selectedSections).length !== coursesWithSections.length ||
       Object.values(selectedSections).includes("")
     ) {
-      alert("Please select a section for all listed courses.");
+      setMessage("Please select a section for all listed courses.");
       return;
     }
 
     setShowConfirmation(true);
   };
 
-  // Submit registration
   const handleSubmit = async () => {
     const user = JSON.parse(localStorage.getItem("student"));
 
@@ -99,6 +96,8 @@ export default function AcademicRegistration() {
       alert("Student ID is not found in local storage.");
       return;
     }
+
+    setIsSubmitting(true);
 
     const studentId = user.studentId;
     const selectedCourseIds = Object.keys(selectedSections).map(Number);
@@ -111,30 +110,29 @@ export default function AcademicRegistration() {
     };
 
     try {
-      await axios.post(APIS.STUDENT_REGISTER, requestData);
+      await axios.post(`${APIS.STUDENT_REGISTER}`, requestData);
       alert("Registration successful!");
       setShowConfirmation(false);
     } catch (error) {
       console.error("Error during registration:", error);
       alert("Failed to register. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
       <SideBar />
-
-      {/* Main Content */}
       <div className="flex-1 p-8 bg-white rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">
           Academic Registration
         </h1>
 
         {message ? (
-          <div className="text-red-600 text-center font-bold">{message}</div>
+          <div className="text-red-600 text-center font-bold mb-4">{message}</div>
         ) : isLoading ? (
-          <p className="text-center text-gray-600">Loading...</p>
+          <Loader/>
         ) : coursesWithSections.length === 0 ? (
           <p className="text-center text-red-600">No Courses or Sections Found</p>
         ) : (
@@ -169,7 +167,10 @@ export default function AcademicRegistration() {
                           Select Section
                         </option>
                         {course.sections.map((section) => (
-                          <option key={section.sectionId} value={section.sectionId}>
+                          <option
+                            key={section.sectionId}
+                            value={section.sectionId}
+                          >
                             {section.sectionNo} - {section.name}
                           </option>
                         ))}
@@ -192,7 +193,6 @@ export default function AcademicRegistration() {
         )}
       </div>
 
-      {/* Confirmation Modal */}
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-3/4">
@@ -232,7 +232,7 @@ export default function AcademicRegistration() {
                 onClick={handleSubmit}
                 className="bg-green-600 text-white py-2 px-6 rounded-md hover:bg-green-700 transition"
               >
-                Confirm and Submit
+                {isSubmitting ? "Submitting..." : "Confirm and Submit"}
               </button>
               <button
                 onClick={() => setShowConfirmation(false)}

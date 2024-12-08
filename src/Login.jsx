@@ -22,18 +22,25 @@ export default function Login() {
         setLoading(true);
     
         try {
-            const response = await axios.post(APIS.LOGIN, {
-                username: User.username,
-                password: User.password,
-            });
-    
+            const response = await axios.post(
+                APIS.LOGIN,
+                {
+                    username: User.username,
+                    password: User.password,
+                },
+                {
+                    headers: {
+                        'api-key': '1234567890',
+                    },
+                }
+            );    
             if (response.status === 200) {
                 const { role, data } = response.data;
     
                 if (role === 'admin') {
                     localStorage.setItem('admin', JSON.stringify(data));
                     localStorage.setItem('role', role);
-                    navigate('home');
+                    navigate('/home');
 
                 } else if (role === 'student') {
                     localStorage.setItem('student', JSON.stringify(data));

@@ -17,7 +17,12 @@ export default function ViewAllPayments() {
         }
 
         const response = await axios.get(
-          `${APIS.VIEW_ALL_PAYMENTS}?studentId=${storedStudent.id}`
+          `${APIS.VIEW_ALL_PAYMENTS}?studentId=${storedStudent.id}`,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }
         );
         console.log(response.data);
         if (response.status === 200) {

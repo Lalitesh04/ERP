@@ -47,7 +47,12 @@ export default function ViewCourseContent() {
 
     try {
       const response = await axios.get(
-        `${APIS.VIEW_COURSE_CONTENTS}?sectionId=${sectionId}`
+        `${APIS.VIEW_COURSE_CONTENTS}?sectionId=${sectionId}`,
+        {
+            headers: {
+                'api-key': '1234567890',
+            },
+        }
       );
       setCourseContents(response.data);
     } catch (err) {

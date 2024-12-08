@@ -12,7 +12,12 @@ export default function ViewAllLeaves() {
   useEffect(() => {
     const fetchLeaves = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_LEAVES); // Replace with your actual endpoint
+        const response = await axios.get(APIS.VIEW_ALL_LEAVES,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }); // Replace with your actual endpoint
         setLeaveRecords(response.data);
         setError("");
       } catch (err) {

@@ -10,7 +10,12 @@ export default function ViewHandout() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(`${APIS.VIEW_CC_COURSES}?facultyId=1`);
+        const response = await axios.get(`${APIS.VIEW_CC_COURSES}?facultyId=1`,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          });
         setCourses(response.data);
       } catch (error) {
         console.error("Error fetching courses:", error);

@@ -20,7 +20,12 @@ export default function ViewFacultyCourses() {
     const fetchFacultyCourses = async () => {
       try {
         const response = await axios.get(
-          `${APIS.VIEW_FACULTY_COURSES}?facultyId=${faculty.id}`
+          `${APIS.VIEW_FACULTY_COURSES}?facultyId=${faculty.id}`,
+          {
+              headers: {
+                  'api-key': '1234567890',
+              },
+          }
         );
         setFacultyCourses(response.data);
         setError("");
@@ -48,7 +53,12 @@ export default function ViewFacultyCourses() {
 
     try {
       const response = await axios.get(
-        `${APIS.VIEW_COURSE_CONTENTS}?sectionId=${sectionId}`
+        `${APIS.VIEW_COURSE_CONTENTS}?sectionId=${sectionId}`,
+        {
+            headers: {
+                'api-key': '1234567890',
+            },
+        }
       );
       setCourseContents(response.data);
     } catch (err) {

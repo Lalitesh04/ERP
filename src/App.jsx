@@ -35,6 +35,7 @@ import Contact from './Contact';
 import PayFee from './student/PayFee';
 import ViewAllPayments from './student/ViewAllPayments';
 import Profile from './faculty/Profile';
+import ViewAllFeePayments from './admin/ViewAllFeePayments';
 
 function App() {
   return (
@@ -45,7 +46,7 @@ function App() {
           <Route path='/' element={<MainHome  />} />
           <Route path='/team' element={<><NavBar/> <Team/></> } />  
           <Route path='/contact' element={<><NavBar/> <Contact /></>} />
-          <Route path='home' element={<Home />} />
+          <Route path='/home' element={<Home />} />
 
           <Route path='admin/addstudent' element={<AddStudent />} />
           <Route path='admin/viewallstudent' element={<ViewAllStudents />} />
@@ -98,6 +99,7 @@ function App() {
           <Route path='payfee' element={<PayFee />} />
           <Route path='viewAllPayments' element={<ViewAllPayments />} />
 
+          <Route path='viewallfeepayments' element={<ViewAllFeePayments />} />
           <Route path='facultyprofile' element={<Profile />} />
           <Route path='/logout' element={<Logout/>} />
         </Routes>
