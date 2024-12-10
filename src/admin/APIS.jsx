@@ -1,4 +1,4 @@
-const baseURL = "http://kl-erp-env.eba-taqxsvmb.us-east-1.elasticbeanstalk.com:2001/api"; 
+const baseURL = "https://erproject.onrender.com/api"; 
 const APIS = {
     LOGIN: `${baseURL}/checkLogin`,
     ADD_STUDENT : `${baseURL}/admin/addstudent`,

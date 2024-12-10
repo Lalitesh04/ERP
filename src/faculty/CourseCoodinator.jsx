@@ -18,7 +18,11 @@ export default function CourseCoordinator() {
     const fetchCourses = async () => {
       try {
         const response = await axios.get(
-          `${APIS.VIEW_CC_COURSES}?facultyId=${faculty.id}`
+          `${APIS.VIEW_CC_COURSES}?facultyId=${faculty.id}`,{
+            headers: {
+                'api-key': '1234567890',
+            },
+          }
         );
         setCourses(response.data);
       } catch (error) {
@@ -40,8 +44,8 @@ export default function CourseCoordinator() {
   // Handle "Save" action in the modal
   const handleSave = async () => {
     if (!file || !selectedCourse) {
-      alert("Please select a file and a valid course.");
-      return;
+        alert("Please select a file and a valid course.");
+        return;
     }
 
     const formData = new FormData();
@@ -49,22 +53,46 @@ export default function CourseCoordinator() {
     formData.append("file", file);
 
     try {
-      const response = await axios.post(APIS.UPLOAD_HANDOUT, formData, {
-        headers: { "Content-Type": "multipart/form-data" , 'api-key': '1234567890'},
-      });
-      alert(response.data || "Handout uploaded successfully!");
-      setIsModalOpen(false);
-      setFile(null);
-      // Refetch courses to update the handout
-      const updatedCourses = await axios.get(
-        `${APIS.VIEW_CC_COURSES}?facultyId=${faculty.id}`
-      );
-      setCourses(updatedCourses.data);
+        // Upload the handout
+        const response = await axios.post(APIS.UPLOAD_HANDOUT, formData, {
+            headers: {
+                'api-key': '1234567890', // Replace with the actual API key
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        // Provide feedback to the user
+        alert(response.data?.message || "Handout uploaded successfully!");
+
+        // Close the modal and reset the file input
+        setIsModalOpen(false);
+        setFile(null);
+
+        // Refetch the courses to update the handout information
+        const { data: updatedCourses } = await axios.get(
+            `${APIS.VIEW_CC_COURSES}?facultyId=${faculty.id}`,{
+              headers: {
+                  'api-key': '1234567890',
+              },
+            }
+        );
+        setCourses(updatedCourses);
     } catch (error) {
-      console.error("Error uploading handout:", error);
-      alert("Failed to upload handout.");
+        console.error("Error uploading handout:", error);
+
+        // Handle different error scenarios
+        if (error.response) {
+            alert(
+                `Failed to upload handout: ${error.response.data?.message || "An error occurred"}`
+            );
+        } else if (error.request) {
+            alert("No response received from the server. Please try again later.");
+        } else {
+            alert(`Error: ${error.message}`);
+        }
     }
-  };
+};
+
 
   return (
     <div className="flex min-h-screen bg-gray-100">

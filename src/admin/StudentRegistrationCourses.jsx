@@ -6,22 +6,25 @@ import APIS from "../admin/APIS";
 export default function StudentRegistrationCourses() {
   const [studentCourses, setStudentCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchStudentCourses = async () => {
+      setIsLoading(true);
+      setError("");
+
       try {
-        const response = await axios.get(APIS.VIEW_ALL_REGISTERED_COURSES,
-          {
-              headers: {
-                  'api-key': '1234567890',
-              },
-          }); // Replace with the actual API endpoint
-        console.log(response.data);
-        
-        setStudentCourses(response.data);
+        const response = await axios.get(APIS.VIEW_ALL_REGISTERED_COURSES, {
+          headers: {
+            "api-key": "1234567890",
+          },
+        }); // Replace with the actual API endpoint
+        setStudentCourses(response.data || []);
       } catch (error) {
         console.error("Error fetching student courses:", error);
-        alert("Failed to fetch registered student courses.");
+        setError(
+          "Failed to fetch registered student courses. Please try again."
+        );
       } finally {
         setIsLoading(false);
       }
@@ -36,15 +39,19 @@ export default function StudentRegistrationCourses() {
       <SideBar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8 bg-white rounded-lg shadow-lg">
+      <div className="flex-1 p-8 bg-white rounded-lg shadow-lg max-w-6xl mx-auto mt-4">
         <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">
           All Student Registered Courses
         </h1>
 
         {isLoading ? (
           <p className="text-center text-gray-600">Loading...</p>
+        ) : error ? (
+          <p className="text-center text-red-600">{error}</p>
         ) : studentCourses.length === 0 ? (
-          <p className="text-center text-red-600">No Student Courses Found</p>
+          <p className="text-center text-gray-600">
+            No registered courses found.
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-300">
@@ -61,12 +68,24 @@ export default function StudentRegistrationCourses() {
               <tbody>
                 {studentCourses.map((mapping, index) => (
                   <tr key={mapping.id} className="hover:bg-gray-100 transition">
-                    <td className="py-2 px-4 border text-center">{index + 1}</td>
-                    <td className="py-2 px-4 border">{mapping.student.studentId}</td>
-                    <td className="py-2 px-4 border">{mapping.course.courseName}</td>
-                    <td className="py-2 px-4 border">{mapping.course.courseCode}</td>
-                    <td className="py-2 px-4 border">{mapping.section.sectionNo}</td>
-                    <td className="py-2 px-4 border">{mapping.section.faculty.name}</td>
+                    <td className="py-2 px-4 border text-center">
+                      {index + 1}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {mapping.student?.studentId || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {mapping.course?.courseName || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {mapping.course?.courseCode || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {mapping.section?.sectionNo || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {mapping.section?.faculty?.name || "N/A"}
+                    </td>
                   </tr>
                 ))}
               </tbody>

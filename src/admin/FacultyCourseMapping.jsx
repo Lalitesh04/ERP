@@ -9,53 +9,51 @@ export default function FacultyCourseMapping() {
   const [selectedFaculty, setSelectedFaculty] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // Fetch all faculties and courses
+  // Fetch faculties and courses
   useEffect(() => {
-    const fetchFaculties = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(APIS.VIEW_ALL_FACULTY,
-          {
-              headers: {
-                  'api-key': '1234567890',
-              },
-          }); // Replace with actual endpoint
-        setFaculties(response.data);
+        const axiosInstance = axios.create({
+          headers: { "api-key": "1234567890" },
+        });
+        
+        const facultiesResponse = await axios.get(APIS.VIEW_ALL_FACULTY,{
+          headers: { "api-key": "1234567890" },
+        })
+        const coursesResponse = await axios.get(APIS.VIEW_ALL_COURSES,{
+          headers: { "api-key": "1234567890" },
+        })
+      
+        setFaculties(facultiesResponse.data || []);
+        setCourses(coursesResponse.data || []);
       } catch (error) {
-        console.error("Error fetching faculties:", error);
-        alert("Failed to load faculties.");
+        console.error("Error fetching data:", error);
+        alert("Failed to load faculties or courses.");
       }
     };
 
-    const fetchCourses = async () => {
-      try {
-        const response = await axios.get(APIS.VIEW_ALL_COURSES,
-          {
-              headers: {
-                  'api-key': '1234567890',
-              },
-          }); // Replace with actual endpoint
-        setCourses(response.data);
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-        alert("Failed to load courses.");
-      }
-    };
-
-    fetchFaculties();
-    fetchCourses();
+    fetchData();
   }, []);
+
+  // Validate form inputs
+  const validateForm = () => {
+    const validationErrors = {};
+    if (!selectedFaculty)
+      validationErrors.selectedFaculty = "Faculty is required.";
+    if (!selectedCourse)
+      validationErrors.selectedCourse = "Course is required.";
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0;
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    if (!validateForm()) return;
 
-    if (!selectedFaculty || !selectedCourse) {
-      alert("Please select both faculty and course.");
-      setIsSubmitting(false);
-      return;
-    }
+    setIsSubmitting(true);
 
     const mappingRequest = {
       facultyId: selectedFaculty,
@@ -63,18 +61,16 @@ export default function FacultyCourseMapping() {
     };
 
     try {
-      await axios.post(APIS.ADD_COURSE_FACULTY_MAPPING, mappingRequest,
-        {
-            headers: {
-                'api-key': '1234567890',
-            },
-        }); // Replace with actual endpoint
+      await axios.post(APIS.ADD_COURSE_FACULTY_MAPPING, mappingRequest, {
+        headers: { "api-key": "1234567890" },
+      });
       alert("Mapping added successfully!");
       setSelectedFaculty("");
       setSelectedCourse("");
+      setErrors({});
     } catch (error) {
       console.error("Error submitting mapping:", error);
-      alert("Failed to map faculty to course.");
+      alert("Failed to map faculty to course. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -86,20 +82,35 @@ export default function FacultyCourseMapping() {
       <SideBar />
 
       {/* Main Content */}
-      <div className="flex-1 p-8 bg-white rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-blue-600 mb-6">Faculty-Course Mapping</h1>
+      <div className="flex-1 p-8 bg-white rounded-lg shadow-lg max-w-4xl mx-auto mt-4 mb-8">
+        <h1 className="text-3xl font-bold text-blue-600 mb-6">
+          Faculty-Course Mapping
+        </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Faculty Dropdown */}
           <div>
-            <label htmlFor="faculty" className="block text-lg font-semibold text-gray-700">
+            <label
+              htmlFor="faculty"
+              className="block text-lg font-semibold text-gray-700"
+            >
               Select Faculty:
             </label>
             <select
               id="faculty"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
+                errors.selectedFaculty
+                  ? "border-red-500 focus:ring-red-400"
+                  : "border-gray-300 focus:ring-blue-400"
+              }`}
               value={selectedFaculty}
-              onChange={(e) => setSelectedFaculty(e.target.value)}
+              onChange={(e) => {
+                setSelectedFaculty(e.target.value);
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  selectedFaculty: null,
+                }));
+              }}
             >
               <option value="">-- Select Faculty --</option>
               {faculties.map((faculty) => (
@@ -108,18 +119,34 @@ export default function FacultyCourseMapping() {
                 </option>
               ))}
             </select>
+            {errors.selectedFaculty && (
+              <p className="text-red-500 text-sm">{errors.selectedFaculty}</p>
+            )}
           </div>
 
           {/* Course Dropdown */}
           <div>
-            <label htmlFor="course" className="block text-lg font-semibold text-gray-700">
+            <label
+              htmlFor="course"
+              className="block text-lg font-semibold text-gray-700"
+            >
               Select Course:
             </label>
             <select
               id="course"
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 ${
+                errors.selectedCourse
+                  ? "border-red-500 focus:ring-red-400"
+                  : "border-gray-300 focus:ring-blue-400"
+              }`}
               value={selectedCourse}
-              onChange={(e) => setSelectedCourse(e.target.value)}
+              onChange={(e) => {
+                setSelectedCourse(e.target.value);
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  selectedCourse: null,
+                }));
+              }}
             >
               <option value="">-- Select Course --</option>
               {courses.map((course) => (
@@ -128,6 +155,9 @@ export default function FacultyCourseMapping() {
                 </option>
               ))}
             </select>
+            {errors.selectedCourse && (
+              <p className="text-red-500 text-sm">{errors.selectedCourse}</p>
+            )}
           </div>
 
           {/* Submit Button */}

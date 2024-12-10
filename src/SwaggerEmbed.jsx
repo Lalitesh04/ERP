@@ -16,7 +16,7 @@ export default function SwaggerEmbed({ toggleSwagger }) {
       {/* Swagger UI Modal */}
       <div className="w-11/12 h-5/6 bg-white rounded-lg overflow-hidden shadow-lg relative">
         <div className="h-full overflow-y-auto">
-          <SwaggerUI url="http://kl-erp-env.eba-taqxsvmb.us-east-1.elasticbeanstalk.com:2001/v3/api-docs" />
+          <SwaggerUI url="https://erproject.onrender.com/v3/api-docs" />
         </div>
       </div>
     </div>

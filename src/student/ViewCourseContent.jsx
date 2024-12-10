@@ -24,7 +24,11 @@ export default function ViewCourseContent() {
 
       try {
         const response = await axios.get(
-          `${APIS.VIEW_ALL_REGISTERED_COURSES_BY_STUDENT}?studentId=${student.studentId}`
+          `${APIS.VIEW_ALL_REGISTERED_COURSES_BY_STUDENT}?studentId=${student.studentId}`,{
+            headers: {
+                'api-key': '1234567890',
+            },
+          }
         );
         setRegisteredCourses(response.data);
       } catch (error) {

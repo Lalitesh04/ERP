@@ -1,55 +1,59 @@
-import React, { useEffect, useState } from 'react';
-import SideBar from './SideBar';
-import axios from 'axios';
-import APIS from './APIS';
+import React, { useEffect, useState } from "react";
+import SideBar from "./SideBar";
+import axios from "axios";
+import APIS from "./APIS";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function ApproveRegistration() {
-  const [students, setStudents] = useState([]); // State to hold student data
-  const [isLoading, setIsLoading] = useState(true); // State for loading
-  const [error, setError] = useState(null); // State for error handling
+  const [students, setStudents] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Fetch students from the server
   const fetchStudents = async () => {
-    setIsLoading(true); // Set loading to true before fetching data
+    setIsLoading(true);
+    setError(null);
     try {
-      const response = await axios.get(APIS.VIEW_ALL_STUDENTS,
-        {
-            headers: {
-                'api-key': '1234567890',
-            },
-        });
-      setStudents(response.data); // Store fetched data in state
-      setError(null); // Reset error
-    } catch (error) {
-      console.error('Error fetching students:', error);
-      setError('Failed to fetch student data.');
+      const response = await axios.get(APIS.VIEW_ALL_STUDENTS, {
+        headers: {
+          "api-key": "1234567890",
+        },
+      });
+      setStudents(response.data || []);
+    } catch (err) {
+      console.error("Error fetching students:", err);
+      setError("Unable to fetch student data. Please try again later.");
     } finally {
-      setIsLoading(false); // Stop loading after data fetch
+      setIsLoading(false);
     }
   };
 
-  // Fetch students on component mount
   useEffect(() => {
     fetchStudents();
   }, []);
 
-  // Approve or reject student registration
+  // Handle student registration approval/rejection
   const handleAction = async (studentId, value) => {
+    if (!studentId) {
+      toast.error("Invalid student ID. Please refresh and try again.");
+      return;
+    }
+
     try {
-      const response = await axios.post(
-        `${APIS.APPROVE_STUDENT_REGISTRATION}?studentId=${studentId}&value=${value}`,
+      await axios.post(
+        `${APIS.APPROVE_STUDENT_REGISTRATION}`,
+        {},
         {
-            headers: {
-                'api-key': '1234567890',
-            },
+          params: { studentId, value },
+          headers: { "api-key": "1234567890" },
         }
       );
-      fetchStudents(); // Refresh the student list after action
-    } catch (error) {
-      console.error('Error updating registration status:', error);
-      toast.error('Failed to update student status. Please try again.');
+      toast.success(`Student registration ${value ? "approved" : "rejected"}.`);
+      fetchStudents();
+    } catch (err) {
+      console.error("Error updating student registration status:", err);
+      toast.error("Failed to update registration status. Please try again.");
     }
   };
 
@@ -64,16 +68,18 @@ export default function ApproveRegistration() {
           Approve Student Registrations
         </h1>
 
-        {/* Notifications */}
+        {/* Toast Notifications */}
         <ToastContainer />
 
         {/* Loading, Error, or Students Table */}
         {isLoading ? (
-          <p className="text-center text-gray-600">Loading students...</p>
+          <p className="text-center text-gray-600">Loading student data...</p>
         ) : error ? (
           <p className="text-center text-red-600">{error}</p>
         ) : students.length === 0 ? (
-          <p className="text-center text-green-600">No pending registrations found.</p>
+          <p className="text-center text-green-600">
+            No pending registrations found.
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-300 rounded-lg shadow">
@@ -89,23 +95,45 @@ export default function ApproveRegistration() {
               <tbody>
                 {students.map((student, index) => (
                   <tr key={student.id} className="hover:bg-gray-100 transition">
-                    <td className="py-2 px-4 border text-center">{index + 1}</td>
-                    <td className="py-2 px-4 border text-center">{student.studentId}</td>
+                    <td className="py-2 px-4 border text-center">
+                      {index + 1}
+                    </td>
+                    <td className="py-2 px-4 border text-center">
+                      {student.studentId}
+                    </td>
                     <td className="py-2 px-4 border">{student.name}</td>
                     <td className="py-2 px-4 border text-center">
-                      {student.approved === false ? 'Pending' : 'Approved'}
+                      <span
+                        className={`font-bold ${
+                          student.approved
+                            ? "text-green-600"
+                            : "text-yellow-600"
+                        }`}
+                      >
+                        {student.approved ? "Approved" : "Pending"}
+                      </span>
                     </td>
                     <td className="py-2 px-4 border text-center">
                       <div className="space-x-2">
                         <button
                           onClick={() => handleAction(student.id, true)}
-                          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+                          disabled={student.approved}
+                          className={`px-4 py-2 rounded-md transition ${
+                            student.approved
+                              ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                              : "bg-green-500 text-white hover:bg-green-600"
+                          }`}
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => handleAction(student.id, false)}
-                          className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+                          disabled={student.approved === false}
+                          className={`px-4 py-2 rounded-md transition ${
+                            student.approved === false
+                              ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+                              : "bg-red-500 text-white hover:bg-red-600"
+                          }`}
                         >
                           Reject
                         </button>

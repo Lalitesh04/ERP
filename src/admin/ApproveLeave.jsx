@@ -1,28 +1,27 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SideBar from "./SideBar";
-import APIS from "../admin/APIS"; // Replace with your API paths
+import APIS from "../admin/APIS"; // Replace with your actual API paths
 
 export default function ApproveLeave() {
   const [leaveApplications, setLeaveApplications] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   // Fetch leave applications
   const fetchLeaveApplications = async () => {
     setIsLoading(true);
+    setError("");
     try {
-      const response = await axios.get(APIS.VIEW_ALL_LEAVES,
-        {
-            headers: {
-                'api-key': '1234567890',
-            },
-        }); // Replace with your actual endpoint
-      setLeaveApplications(response.data);
-      setError("");
-    } catch (error) {
-      console.error("Error fetching leave applications:", error);
-      setError("Failed to fetch leave applications.");
+      const response = await axios.get(APIS.VIEW_ALL_LEAVES, {
+        headers: {
+          "api-key": "1234567890",
+        },
+      });
+      setLeaveApplications(response.data || []);
+    } catch (err) {
+      console.error("Error fetching leave applications:", err);
+      setError("Failed to fetch leave applications. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -34,16 +33,24 @@ export default function ApproveLeave() {
 
   // Handle leave status update
   const handleUpdate = async (leaveId, status) => {
-    try {
-      await axios.post(`${APIS.UPDATE_LEAVE_STATUS}`, null, {
-        params: { facultyLeaveId: leaveId, status: status }
-        
-      });
+    if (!leaveId || !status) {
+      alert("Invalid leave ID or status.");
+      return;
+    }
 
-      // Refresh the list after updating the status
-      fetchLeaveApplications();
-    } catch (error) {
-      console.error("Error updating leave status:", error);
+    try {
+      await axios.post(
+        APIS.UPDATE_LEAVE_STATUS,
+        {},
+        {
+          params: { facultyLeaveId: leaveId, status },
+          headers: { "api-key": "1234567890" },
+        }
+      );
+      alert(`Leave status updated to ${status}.`);
+      fetchLeaveApplications(); // Refresh the list
+    } catch (err) {
+      console.error("Error updating leave status:", err);
       alert("Failed to update leave status. Please try again.");
     }
   };
@@ -57,11 +64,15 @@ export default function ApproveLeave() {
         </h1>
 
         {isLoading ? (
-          <p className="text-center text-gray-600">Loading...</p>
+          <p className="text-center text-gray-600">
+            Loading leave applications...
+          </p>
         ) : error ? (
           <p className="text-center text-red-600">{error}</p>
         ) : leaveApplications.length === 0 ? (
-          <p className="text-center text-gray-600">No leave applications found.</p>
+          <p className="text-center text-gray-600">
+            No leave applications found.
+          </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full border border-gray-300">
@@ -79,11 +90,21 @@ export default function ApproveLeave() {
               <tbody>
                 {leaveApplications.map((leave, index) => (
                   <tr key={leave.id} className="hover:bg-gray-100 transition">
-                    <td className="py-2 px-4 border text-center">{index + 1}</td>
-                    <td className="py-2 px-4 border">{leave.faculty.name}</td>
-                    <td className="py-2 px-4 border">{leave.startDate}</td>
-                    <td className="py-2 px-4 border">{leave.endDate}</td>
-                    <td className="py-2 px-4 border">{leave.reason}</td>
+                    <td className="py-2 px-4 border text-center">
+                      {index + 1}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {leave.faculty?.name || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {leave.startDate || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {leave.endDate || "N/A"}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {leave.reason || "N/A"}
+                    </td>
                     <td
                       className={`py-2 px-4 border text-center font-bold ${
                         leave.status === "Approved"
@@ -93,25 +114,27 @@ export default function ApproveLeave() {
                           : "text-yellow-600"
                       }`}
                     >
-                      {leave.status}
+                      {leave.status || "Pending"}
                     </td>
                     <td className="py-2 px-4 border text-center">
-                      
-                        <div className="flex space-x-2">
+                      <div className="flex justify-center space-x-2">
+                        {leave.status !== "Approved" && (
                           <button
                             onClick={() => handleUpdate(leave.id, "Approved")}
                             className="bg-green-600 text-white py-1 px-4 rounded-md hover:bg-green-700 transition"
                           >
                             Approve
                           </button>
+                        )}
+                        {leave.status !== "Rejected" && (
                           <button
                             onClick={() => handleUpdate(leave.id, "Rejected")}
                             className="bg-red-600 text-white py-1 px-4 rounded-md hover:bg-red-700 transition"
                           >
                             Reject
                           </button>
-                        </div>
-                      
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

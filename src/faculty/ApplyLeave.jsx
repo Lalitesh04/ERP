@@ -9,7 +9,11 @@ export default function ApplyLeave() {
     endDate: "",
     reason: "",
   });
+  const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+
+  // Get today's date in yyyy-mm-dd format
+  const today = new Date().toISOString().split("T")[0];
 
   // Handle input change
   const handleChange = (e) => {
@@ -18,11 +22,43 @@ export default function ApplyLeave() {
       ...prev,
       [name]: value,
     }));
+    setErrors((prev) => ({ ...prev, [name]: "" })); // Reset field-specific error
+  };
+
+  // Validate the form
+  const validate = () => {
+    let validationErrors = {};
+
+    if (!formData.startDate) {
+      validationErrors.startDate = "Start Date is required.";
+    } else if (formData.startDate < today) {
+      validationErrors.startDate = "Start Date cannot be in the past.";
+    }
+
+    if (!formData.endDate) {
+      validationErrors.endDate = "End Date is required.";
+    } else if (formData.endDate < formData.startDate) {
+      validationErrors.endDate = "End Date cannot be earlier than Start Date.";
+    }
+
+    if (!formData.reason) {
+      validationErrors.reason = "Reason for leave is required.";
+    } else if (formData.reason.length < 10) {
+      validationErrors.reason = "Reason must be at least 10 characters long.";
+    }
+
+    setErrors(validationErrors);
+    return Object.keys(validationErrors).length === 0; // Return true if no errors
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) {
+      return; // Stop submission if validation fails
+    }
+
     const faculty = JSON.parse(localStorage.getItem("faculty")); // Fetch faculty details from localStorage
     if (!faculty) {
       setMessage("Faculty information not found. Please log in.");
@@ -35,14 +71,14 @@ export default function ApplyLeave() {
     };
 
     try {
-      const response = await axios.post(APIS.APPLY_LEAVE, requestData,
-        {
-            headers: {
-                'api-key': '1234567890',
-            },
-        }); // Replace with actual API endpoint
+      const response = await axios.post(APIS.APPLY_LEAVE, requestData, {
+        headers: {
+          "api-key": "1234567890",
+        },
+      }); // Replace with actual API endpoint
       if (response.status === 200) {
         setMessage("Leave application submitted successfully!");
+        setFormData({ startDate: "", endDate: "", reason: "" }); // Reset form
       } else {
         setMessage("Failed to submit leave application. Please try again.");
       }
@@ -80,8 +116,12 @@ export default function ApplyLeave() {
               value={formData.startDate}
               onChange={handleChange}
               required
+              min={today} // Prevent past dates
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"
             />
+            {errors.startDate && (
+              <p className="text-red-600 text-sm">{errors.startDate}</p>
+            )}
           </div>
 
           <div className="mb-4">
@@ -98,8 +138,12 @@ export default function ApplyLeave() {
               value={formData.endDate}
               onChange={handleChange}
               required
+              min={today} // Prevent past dates
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"
             />
+            {errors.endDate && (
+              <p className="text-red-600 text-sm">{errors.endDate}</p>
+            )}
           </div>
 
           <div className="mb-4">
@@ -118,6 +162,9 @@ export default function ApplyLeave() {
               rows="4"
               className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"
             />
+            {errors.reason && (
+              <p className="text-red-600 text-sm">{errors.reason}</p>
+            )}
           </div>
 
           <button

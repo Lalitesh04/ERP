@@ -57,7 +57,12 @@ export default function PayFee() {
         };
 
         try {
-          const apiResponse = await axios.post(APIS.PAY_FEE, paymentDetails);
+          const apiResponse = await axios.post(APIS.PAY_FEE, paymentDetails,{
+            headers: {
+                'api-key': '1234567890',
+            },
+  
+          });
 
           if (apiResponse.status === 200) {
             alert("Payment Successful and Registered!");

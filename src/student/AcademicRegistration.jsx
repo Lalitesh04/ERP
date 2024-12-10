@@ -23,7 +23,11 @@ export default function AcademicRegistration() {
         }
 
         const studentResponse = await axios.get(
-          `${APIS.VIEW_STUDENT_bY_ID}?studentId=${user.studentId}`
+          `${APIS.VIEW_STUDENT_bY_ID}?studentId=${user.studentId}`,{
+            headers:{
+              "api-key": "1234567890"
+            }
+          }
         );
         const student = studentResponse.data;
 
@@ -36,7 +40,11 @@ export default function AcademicRegistration() {
           return;
         }
 
-        const response = await axios.get(`${APIS.VIEW_ALL_SECTIONS}`);
+        const response = await axios.get(`${APIS.VIEW_ALL_SECTIONS}`,{
+          headers: {
+              'api-key': '1234567890',
+          },
+        });
         const sections = response.data;
 
         const groupedByCourse = sections.reduce((acc, section) => {
@@ -110,7 +118,11 @@ export default function AcademicRegistration() {
     };
 
     try {
-      await axios.post(`${APIS.STUDENT_REGISTER}`, requestData);
+      await axios.post(`${APIS.STUDENT_REGISTER}`, requestData,{
+        headers: {
+          'api-key': '1234567890',
+        },
+      });
       alert("Registration successful!");
       setShowConfirmation(false);
     } catch (error) {
